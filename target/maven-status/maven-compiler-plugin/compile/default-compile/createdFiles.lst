@@ -1,0 +1,6 @@
+com\example\nhatro\repository\KhachHangRepository.class
+com\example\nhatro\service\KhachHangService.class
+com\example\nhatro\DoAnNhatro.class
+com\example\nhatro\service\impl\KhachHangServiceImpl.class
+com\example\nhatro\controller\KhachHangcontroller.class
+com\example\nhatro\entity\KhachHang.class
