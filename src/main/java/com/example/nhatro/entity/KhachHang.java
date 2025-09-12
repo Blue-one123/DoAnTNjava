@@ -3,64 +3,38 @@ package com.example.nhatro.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "khach_hang")
+@Table(name = "khachhang")
 public class KhachHang {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // AUTO INCREMENT
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
-    private String hoTen;
+    @Column(name = "ten_khach_hang", nullable = false)
+    private String tenKhachHang;
 
-    @Column(nullable = false, unique = true, length = 20)
+    @Column(name = "so_dien_thoai", nullable = false, unique = true)
     private String soDienThoai;
 
-    @Column(length = 200)
+    @Column(name = "dia_chi")
     private String diaChi;
 
-    @Column(nullable = false, unique = true, length = 20)
-    private String cccd;
+    @Column(name = "email")
+    private String email;
 
-    // ===== GETTER & SETTER =====
+    // Getter & Setter
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public Long getId() {
-        return id;
-    }
+    public String getTenKhachHang() { return tenKhachHang; }
+    public void setTenKhachHang(String tenKhachHang) { this.tenKhachHang = tenKhachHang; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getSoDienThoai() { return soDienThoai; }
+    public void setSoDienThoai(String soDienThoai) { this.soDienThoai = soDienThoai; }
 
-    public String getHoTen() {
-        return hoTen;
-    }
+    public String getDiaChi() { return diaChi; }
+    public void setDiaChi(String diaChi) { this.diaChi = diaChi; }
 
-    public void setHoTen(String hoTen) {
-        this.hoTen = hoTen;
-    }
-
-    public String getSoDienThoai() {
-        return soDienThoai;
-    }
-
-    public void setSoDienThoai(String soDienThoai) {
-        this.soDienThoai = soDienThoai;
-    }
-
-    public String getDiaChi() {
-        return diaChi;
-    }
-
-    public void setDiaChi(String diaChi) {
-        this.diaChi = diaChi;
-    }
-
-    public String getCccd() {
-        return cccd;
-    }
-
-    public void setCccd(String cccd) {
-        this.cccd = cccd;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 }

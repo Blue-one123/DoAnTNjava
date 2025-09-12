@@ -1,51 +1,59 @@
 package com.example.nhatro.service.impl;
 
+import com.example.nhatro.dto.KhachHangDTO;
 import com.example.nhatro.entity.KhachHang;
+import com.example.nhatro.mapper.KhachHangMapper;
 import com.example.nhatro.repository.KhachHangRepository;
 import com.example.nhatro.service.KhachHangService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
 @Service
 public class KhachHangServiceImpl implements KhachHangService {
 
     @Autowired
-    private KhachHangRepository khachHangRepository;
+    private KhachHangRepository repository;
+
+    @Autowired
+    private KhachHangMapper mapper;
 
     @Override
-    public List<KhachHang> getAllKhachHang() {
-        return khachHangRepository.findAll();
+    public Page<KhachHangDTO> getAllKhachHang(int page, int size) {
+        return repository.findAll(PageRequest.of(page, size)).map(mapper::toDTO);
     }
 
     @Override
-    public KhachHang getKhachHangById(Long id) {
-        return khachHangRepository.findById(id).orElse(null);
+    public KhachHangDTO getKhachHangById(Long id) {
+        KhachHang entity = repository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Không tìm thấy khách hàng với id = " + id));
+        return mapper.toDTO(entity);
     }
 
     @Override
-    public KhachHang saveKhachHang(KhachHang khachHang) {
-        return khachHangRepository.save(khachHang);
+    public KhachHangDTO createKhachHang(KhachHangDTO dto) {
+        KhachHang entity = mapper.toEntity(dto);
+        return mapper.toDTO(repository.save(entity));
     }
 
     @Override
-    public KhachHang updateKhachHang(Long id, KhachHang khachHang) {
-        Optional<KhachHang> existing = khachHangRepository.findById(id);
-        if (existing.isPresent()) {
-            KhachHang k = existing.get();
-            k.setHoTen(khachHang.getHoTen());
-            k.setSoDienThoai(khachHang.getSoDienThoai());
-            k.setDiaChi(khachHang.getDiaChi());
-            k.setCccd(khachHang.getCccd());
-            return khachHangRepository.save(k);
-        }
-        return null;
+    public KhachHangDTO updateKhachHang(Long id, KhachHangDTO dto) {
+        KhachHang entity = repository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Không tìm thấy khách hàng với id = " + id));
+
+        entity.setTenKhachHang(dto.getTenKhachHang());
+        entity.setSoDienThoai(dto.getSoDienThoai());
+        entity.setDiaChi(dto.getDiaChi());
+        entity.setEmail(dto.getEmail());
+
+        return mapper.toDTO(repository.save(entity));
     }
 
     @Override
     public void deleteKhachHang(Long id) {
-        khachHangRepository.deleteById(id);
+        repository.deleteById(id);
     }
 }
