@@ -7,7 +7,7 @@ import java.time.LocalDate;
 @Data
 public class HoaDonDTO {
     private Long id;
-
+ 
     @NotNull
     private Long phongId;
 

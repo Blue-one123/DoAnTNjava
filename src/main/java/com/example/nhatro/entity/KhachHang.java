@@ -15,7 +15,10 @@ public class KhachHang {
 
     @Column(name = "so_dien_thoai", nullable = false, unique = true)
     private String soDienThoai;
-
+    
+    @Column(name = "ngay_sinh", nullable = false, unique = true)
+    private String ngaySinh;
+    
     @Column(name = "dia_chi")
     private String diaChi;
 
@@ -31,6 +34,9 @@ public class KhachHang {
 
     public String getSoDienThoai() { return soDienThoai; }
     public void setSoDienThoai(String soDienThoai) { this.soDienThoai = soDienThoai; }
+    
+    public String getNgaySinh() { return ngaySinh; }
+    public void setNgaySinh(String ngaySinh) { this.ngaySinh = ngaySinh; }
 
     public String getDiaChi() { return diaChi; }
     public void setDiaChi(String diaChi) { this.diaChi = diaChi; }

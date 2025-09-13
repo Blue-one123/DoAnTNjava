@@ -1,9 +1,14 @@
 package com.example.nhatro.dto;
 
-import lombok.Data;
+import lombok.*;
+
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class UserDTO {
     private Long id;
     private String username;

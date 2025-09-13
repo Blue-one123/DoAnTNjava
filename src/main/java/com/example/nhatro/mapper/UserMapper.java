@@ -2,13 +2,23 @@ package com.example.nhatro.mapper;
 
 import com.example.nhatro.dto.UserDTO;
 import com.example.nhatro.entity.User;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring", imports = java.util.stream.Collectors.class)
-public interface UserMapper {
-    @Mapping(target = "roles", expression = "java(user.getRoles().stream().map(r -> r.getName()).collect(java.util.stream.Collectors.toSet()))")
-    UserDTO toDto(User user);
+import java.util.stream.Collectors;
 
-    // mapping DTO->entity for register we will do manually in Service (because of password encode and roles)
+@Component
+public class UserMapper {
+    public UserDTO toDto(User user) {
+        if (user == null) return null;
+        UserDTO dto = new UserDTO();
+        dto.setId(user.getId());
+        dto.setUsername(user.getUsername());
+        dto.setEmail(user.getEmail());
+        dto.setRoles(user.getRoles()
+                .stream()
+                .map(r -> r.getName())
+                .collect(Collectors.toSet()));
+        return dto;
+    }
 }
+
