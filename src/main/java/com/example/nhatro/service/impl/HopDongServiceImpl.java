@@ -32,7 +32,7 @@ public class HopDongServiceImpl implements HopDongService {
         Page<HopDong> page;
         if (keyword != null && !keyword.isEmpty()) {
             // Ví dụ: tìm theo tên khách hàng
-            page = hopDongRepository.findByKhachHang_TenContainingIgnoreCase(keyword, pageable);
+            page = hopDongRepository.findByKhachHang_TenKhachHangContainingIgnoreCase(keyword, pageable);
         } else {
             page = hopDongRepository.findAll(pageable);
         }

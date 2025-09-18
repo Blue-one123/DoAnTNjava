@@ -15,9 +15,9 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class DataInitializer {
 
-    private final RoleRepository roleRepo = null;
-    private final UserRepository userRepo = null;
-    private final PasswordEncoder passwordEncoder = null;
+    private final RoleRepository roleRepo;
+    private final UserRepository userRepo;
+    private final PasswordEncoder passwordEncoder;
 
     @Bean
     CommandLineRunner init() {
