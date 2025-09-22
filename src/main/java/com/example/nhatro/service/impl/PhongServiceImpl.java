@@ -6,9 +6,10 @@ import com.example.nhatro.mapper.PhongMapper;
 import com.example.nhatro.repository.PhongRepository;
 import com.example.nhatro.service.PhongService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PhongServiceImpl implements PhongService {
@@ -17,9 +18,11 @@ public class PhongServiceImpl implements PhongService {
     private PhongRepository phongRepository;
 
     @Override
-    public Page<PhongDTO> getAllPhong(int page, int size) {
-        return phongRepository.findAll(PageRequest.of(page, size))
-                .map(PhongMapper::toDTO); // ✅ chuyển entity -> dto
+    public List<PhongDTO> getAllPhong() {
+        return phongRepository.findAll()
+                .stream()
+                .map(PhongMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -41,10 +44,11 @@ public class PhongServiceImpl implements PhongService {
         Phong existing = phongRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng có id = " + id));
 
-        
+        existing.setMaPhong(phongDTO.getMaPhong());
         existing.setLoaiPhong(phongDTO.getLoaiPhong());
         existing.setGiaPhong(phongDTO.getGiaPhong());
         existing.setTrangThai(phongDTO.getTrangThai());
+        existing.setMoTa(phongDTO.getMoTa());
 
         Phong updated = phongRepository.save(existing);
         return PhongMapper.toDTO(updated);

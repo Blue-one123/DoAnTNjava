@@ -15,14 +15,16 @@ public class KhachHangDTO {
     @NotBlank(message = "Số điện thoại không được để trống")
     @Pattern(regexp = "^(0[0-9]{9})$", message = "Số điện thoại không hợp lệ")
     private String soDienThoai;
-
+    
+    private String ngaySinh;
+    
     @Size(max = 200)
     private String diaChi;
-
-    @NotBlank(message = "CCCD không được để trống")
-    private String cccd;
-
+    
     @Email
     private String email;
+    
+    @NotBlank(message = "CCCD không được để trống")
+    private String cccd;
 }
 

@@ -2,6 +2,7 @@ package com.example.nhatro.controller;
 
 import com.example.nhatro.dto.KhachHangDTO;
 import com.example.nhatro.service.KhachHangService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,12 @@ public class KhachHangcontroller {
     @Autowired
     public KhachHangcontroller(KhachHangService khachHangService) {
         this.khachHangService = khachHangService;
+    }
+    // Lấy toàn bộ khách hàng (không phân trang)
+    @GetMapping("/all")
+    public ResponseEntity<List<KhachHangDTO>> getAllKhachHangNoPaging() {
+    List<KhachHangDTO> result = khachHangService.getAllKhachHangNoPaging();
+    return ResponseEntity.ok(result);
     }
 
     // Lấy danh sách khách hàng (có phân trang)

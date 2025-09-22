@@ -1,16 +1,16 @@
-
 package com.example.nhatro.service.impl;
 
-
 import com.example.nhatro.entity.HoaDon;
+import com.example.nhatro.entity.KhachHang;
 import com.example.nhatro.entity.Phong;
 import com.example.nhatro.repository.HoaDonRepository;
+import com.example.nhatro.repository.KhachHangRepository;
 import com.example.nhatro.repository.PhongRepository;
 import com.example.nhatro.service.ThongKeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.Month;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -18,57 +18,72 @@ import java.util.stream.Collectors;
 public class ThongkeServiceImpl implements ThongKeService {
 
     @Autowired
-    private HoaDonRepository hoaDonRepository;
-
-    @Autowired
     private PhongRepository phongRepository;
 
+    @Autowired
+    private KhachHangRepository khachHangRepository;
+
+    @Autowired
+    private HoaDonRepository hoaDonRepository;
+
+    // ✅ 1. Tổng số phòng
+    @Override
+    public Long tongSoPhong() {
+        return phongRepository.count();
+    }
+
+    // ✅ 2. Số khách hàng đang sử dụng phòng
+   
+   @Override
+    public Long tongKhachHang() {
+        return khachHangRepository.count();
+    }
+
+
+    // ✅ 3. Tổng doanh thu
+    @Override
+    public Double tongDoanhThu() {
+        return hoaDonRepository.findAll().stream()
+                .mapToDouble(HoaDon::getTongTien)
+                .sum();
+    }
+
+    // ✅ 4. Doanh thu theo tháng trong 1 năm
     @Override
     public Map<String, Double> doanhThuTheoThang(int year) {
+        Map<String, Double> result = new LinkedHashMap<>();
+
+        // Khởi tạo 12 tháng = 0
+        for (int i = 1; i <= 12; i++) {
+            result.put("Tháng " + i, 0.0);
+        }
+
         List<HoaDon> hoaDons = hoaDonRepository.findAll();
 
-        return hoaDons.stream()
-                .filter(hd -> hd.getNgayTao().getYear() == year && "Đã thanh toán".equals(hd.getTrangThai()))
-                .collect(Collectors.groupingBy(
-                        hd -> hd.getNgayTao().getMonth().toString(),
-                        Collectors.summingDouble(HoaDon::getTongTien)
-                ));
+        for (HoaDon hd : hoaDons) {
+            if (hd.getNgayTao() != null && hd.getNgayTao().getYear() == year) {
+                int month = hd.getNgayTao().getMonthValue();
+                result.put("Tháng " + month,
+                        result.get("Tháng " + month) + hd.getTongTien());
+            }
+        }
+        return result;
     }
 
+    // ✅ 5. Thống kê phòng theo trạng thái
     @Override
-    public List<String> danhSachPhongTheoTrangThai(String trangThai) {
-        List<Phong> phongs = phongRepository.findByTrangThai(trangThai);
-        return phongs.stream()
-                .map(p -> "Phòng: " + p.getMaPhong() + " - Loại: " + p.getLoaiPhong() + " - Giá: " + p.getGiaPhong())
-                .collect(Collectors.toList());
-    }
+    public List<Map<String, Object>> thongKePhongTheoTrangThai(String trangThai) {
+        List<Phong> dsPhong = phongRepository.findByTrangThai(trangThai);
 
-    @Override
-    public Double chiPhiTrungBinhTheoThang(int month, int year) {
-        List<HoaDon> hoaDons = hoaDonRepository.findAll();
-
-        List<HoaDon> filtered = hoaDons.stream()
-                .filter(hd -> hd.getNgayTao().getYear() == year && hd.getNgayTao().getMonthValue() == month)
-                .toList();
-
-        if (filtered.isEmpty()) return 0.0;
-
-        double tongChiPhi = filtered.stream().mapToDouble(HoaDon::getTongTien).sum();
-        return tongChiPhi / filtered.size();
-    }
-
-    @Override
-    public List<String> topKhachHangThueLau() {
-        // Giả sử sẽ bổ sung sau từ bảng HopDong
-        return List.of("Khách hàng A - 24 tháng", "Khách hàng B - 18 tháng");
-    }
-
-    @Override
-    public List<String> danhSachNoTien() {
-        List<HoaDon> hoaDons = hoaDonRepository.findByTrangThai("Chưa thanh toán");
-        return hoaDons.stream()
-                .map(hd -> "Hóa đơn ID: " + hd.getId() + " - KH: " + hd.getKhachHang().getTenKhachHang() +
-                        " - Phòng: " + hd.getPhong().getMaPhong() + " - Số tiền: " + hd.getTongTien())
+        return dsPhong.stream()
+                .map(phong -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("id", phong.getId());
+                    map.put("tenPhong", phong.getMaPhong());
+                    map.put("trangThai", phong.getTrangThai());
+                    map.put("giaPhong", phong.getGiaPhong());
+                    return map;
+                })
                 .collect(Collectors.toList());
     }
 }

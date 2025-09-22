@@ -1,10 +1,10 @@
 package com.example.nhatro.service;
 
 import com.example.nhatro.dto.PhongDTO;
-import org.springframework.data.domain.Page;
+import java.util.List;
 
 public interface PhongService {
-    Page<PhongDTO> getAllPhong(int page, int size);
+    List<PhongDTO> getAllPhong();
     PhongDTO getPhongById(Long id);
     PhongDTO createPhong(PhongDTO phongDTO);
     PhongDTO updatePhong(Long id, PhongDTO phongDTO);

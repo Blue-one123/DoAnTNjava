@@ -13,12 +13,15 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+/**
+ * Filter để kiểm tra JWT trong mọi request (trừ /auth/**).
+ * Nếu JWT hợp lệ -> set Authentication vào SecurityContext.
+ */
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService customUserDetailsService;
 
-    // ✅ Constructor để inject JwtUtil và CustomUserDetailsService
     public JwtAuthenticationFilter(JwtUtil jwtUtil, CustomUserDetailsService customUserDetailsService) {
         this.jwtUtil = jwtUtil;
         this.customUserDetailsService = customUserDetailsService;
@@ -29,36 +32,42 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain chain) throws ServletException, IOException {
         try {
-            // Lấy token từ header Authorization
-            String header = request.getHeader("Authorization");
-            if (StringUtils.hasText(header) && header.startsWith("Bearer ")) {
-                String token = header.substring(7);
+            // ✅ Lấy JWT từ header Authorization
+            String token = getJwtFromRequest(request);
 
-                if (jwtUtil.validateToken(token)) {
-                    String username = jwtUtil.getUsername(token);
+            if (StringUtils.hasText(token) && jwtUtil.validateToken(token)) {
+                // ✅ Lấy username từ JWT
+                String username = jwtUtil.getUsername(token);
 
-                    // Lấy userDetails từ DB
-                    UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+                // ✅ Load thông tin user từ DB
+                UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
 
-                    // Tạo Authentication object
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(
-                                    userDetails,
-                                    null,
-                                    userDetails.getAuthorities()
-                            );
+                // ✅ Tạo đối tượng Authentication
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities()
+                        );
 
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                    // Gắn Authentication vào SecurityContext
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                }
+                // ✅ Gán vào SecurityContext
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception ex) {
-            logger.error("JWT Authentication error: {}", ex);
+            logger.error("❌ Lỗi xác thực JWT: " + ex.getMessage(), ex);
         }
 
-        // Tiếp tục filter chain
+        // ✅ Tiếp tục filter chain
         chain.doFilter(request, response);
+    }
+
+    private String getJwtFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7); // Bỏ "Bearer "
+        }
+        return null;
     }
 }

@@ -8,17 +8,20 @@ import java.util.stream.Collectors;
 
 @Component
 public class UserMapper {
+
     public UserDTO toDto(User user) {
         if (user == null) return null;
+
         UserDTO dto = new UserDTO();
         dto.setId(user.getId());
         dto.setUsername(user.getUsername());
         dto.setEmail(user.getEmail());
-        dto.setRoles(user.getRoles()
-                .stream()
+        dto.setRoles(
+            user.getRoles().stream()
                 .map(r -> r.getName())
-                .collect(Collectors.toSet()));
+                .collect(Collectors.toSet())
+        );
+
         return dto;
     }
 }
-

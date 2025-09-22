@@ -5,12 +5,14 @@ import com.example.nhatro.entity.KhachHang;
 import com.example.nhatro.mapper.KhachHangMapper;
 import com.example.nhatro.repository.KhachHangRepository;
 import com.example.nhatro.service.KhachHangService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 public class KhachHangServiceImpl implements KhachHangService {
@@ -38,6 +40,14 @@ public class KhachHangServiceImpl implements KhachHangService {
         KhachHang entity = mapper.toEntity(dto);
         return mapper.toDTO(repository.save(entity));
     }
+    
+    @Override
+    public List<KhachHangDTO> getAllKhachHangNoPaging() {
+    return repository.findAll()
+            .stream()
+            .map(mapper::toDTO)
+            .collect(Collectors.toList());
+}
 
     @Override
     public KhachHangDTO updateKhachHang(Long id, KhachHangDTO dto) {

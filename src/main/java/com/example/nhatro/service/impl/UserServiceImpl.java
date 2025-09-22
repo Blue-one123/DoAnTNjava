@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    @Override
+    /*@Override
     public UserDTO createUser(UserDTO userDTO) {
         User user = new User();
         user.setUsername(userDTO.getUsername());
@@ -43,7 +43,25 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(userDTO.getUsername()));
         User saved = userRepo.save(user);
         return userMapper.toDto(saved);
+    }*/
+    @Override
+public UserDTO createUser(UserDTO userDTO) {
+    // 1. Kiểm tra sự tồn tại của username hoặc email
+    if (userRepo.existsByUsername(userDTO.getUsername()) || userRepo.existsByEmail(userDTO.getEmail())) {
+        throw new RuntimeException("Username or Email already exists!");
     }
+    
+    User user = new User();
+    user.setUsername(userDTO.getUsername());
+    user.setEmail(userDTO.getEmail());
+    
+    // ✅ Sửa: Lấy mật khẩu từ userDTO và mã hóa nó
+    user.setPassword(passwordEncoder.encode(userDTO.getPassword())); 
+    
+    // Lưu người dùng và trả về DTO
+    User saved = userRepo.save(user);
+    return userMapper.toDto(saved);
+}
 
     @Override
     public UserDTO updateUser(Long id, UserDTO userDTO) {

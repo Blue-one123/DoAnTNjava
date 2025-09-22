@@ -3,7 +3,7 @@ package com.example.nhatro.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "khachhang")
+@Table(name = "khach_hang")
 public class KhachHang {
 
     @Id
@@ -24,6 +24,9 @@ public class KhachHang {
 
     @Column(name = "email")
     private String email;
+    
+    @Column(name = "cccd")
+    private String cccd;
 
     // Getter & Setter
     public Long getId() { return id; }
@@ -43,4 +46,7 @@ public class KhachHang {
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+    
+    public String getCccd() { return cccd; }
+    public void setCccd(String cccd) { this.cccd = cccd; }
 }

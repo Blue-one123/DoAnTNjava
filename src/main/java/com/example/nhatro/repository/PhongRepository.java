@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface PhongRepository extends JpaRepository<Phong, Long> {
     List<Phong> findByLoaiPhongContainingIgnoreCase(String loaiPhong);
+    
     List<Phong> findByTrangThai(String trangThai);
     Page<Phong> findByLoaiPhongContainingIgnoreCase(String loaiPhong, Pageable pageable);
 }
