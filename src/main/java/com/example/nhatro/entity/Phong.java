@@ -22,7 +22,7 @@ public class Phong {
 
     @Column(length = 500)
     private String moTa;
-
+    
     // getter & setter
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -41,4 +41,5 @@ public class Phong {
 
     public String getMoTa() { return moTa; }
     public void setMoTa(String moTa) { this.moTa = moTa; }
+    
 }

@@ -15,18 +15,23 @@ public class KhachHang {
 
     @Column(name = "so_dien_thoai", nullable = false, unique = true)
     private String soDienThoai;
-    
-    @Column(name = "ngay_sinh", nullable = false, unique = true)
+
+    @Column(name = "ngay_sinh", nullable = false)
     private String ngaySinh;
-    
+
     @Column(name = "dia_chi")
     private String diaChi;
 
     @Column(name = "email")
     private String email;
-    
+
     @Column(name = "cccd")
     private String cccd;
+
+    // 🔑 Quan hệ với Phong
+    @ManyToOne
+    @JoinColumn(name = "phong_id") // Khóa ngoại trong bảng khach_hang
+    private Phong phong;
 
     // Getter & Setter
     public Long getId() { return id; }
@@ -37,7 +42,7 @@ public class KhachHang {
 
     public String getSoDienThoai() { return soDienThoai; }
     public void setSoDienThoai(String soDienThoai) { this.soDienThoai = soDienThoai; }
-    
+
     public String getNgaySinh() { return ngaySinh; }
     public void setNgaySinh(String ngaySinh) { this.ngaySinh = ngaySinh; }
 
@@ -46,7 +51,10 @@ public class KhachHang {
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
-    
+
     public String getCccd() { return cccd; }
     public void setCccd(String cccd) { this.cccd = cccd; }
+
+    public Phong getPhong() { return phong; }
+    public void setPhong(Phong phong) { this.phong = phong; }
 }

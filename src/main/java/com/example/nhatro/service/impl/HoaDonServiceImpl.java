@@ -9,6 +9,8 @@ import com.example.nhatro.repository.HoaDonRepository;
 import com.example.nhatro.repository.KhachHangRepository;
 import com.example.nhatro.repository.PhongRepository;
 import com.example.nhatro.service.HoaDonService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,87 +19,86 @@ import java.util.stream.Collectors;
 @Service
 public class HoaDonServiceImpl implements HoaDonService {
 
-    private final HoaDonRepository hoaDonRepository;
-    private final KhachHangRepository khachHangRepository;
-    private final PhongRepository phongRepository;
+    @Autowired
+    private HoaDonRepository hoaDonRepository;
 
-    public HoaDonServiceImpl(HoaDonRepository hoaDonRepository,
-                             KhachHangRepository khachHangRepository,
-                             PhongRepository phongRepository) {
-        this.hoaDonRepository = hoaDonRepository;
-        this.khachHangRepository = khachHangRepository;
-        this.phongRepository = phongRepository;
+    @Autowired
+    private KhachHangRepository khachHangRepository;
+
+    @Autowired
+    private PhongRepository phongRepository;
+
+    @Autowired
+    private HoaDonMapper hoaDonMapper;
+
+    @Override
+    public HoaDonDTO createHoaDon(HoaDonDTO dto) {
+        HoaDon hoaDon = hoaDonMapper.toEntity(dto);
+
+        KhachHang khachHang = khachHangRepository.findById(dto.getKhachHangId())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy khách hàng"));
+        hoaDon.setKhachHang(khachHang);
+
+        Phong phong = phongRepository.findById(dto.getPhongId())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng"));
+        hoaDon.setPhong(phong);
+
+        HoaDon saved = hoaDonRepository.save(hoaDon);
+        return hoaDonMapper.toDTO(saved);
     }
 
     @Override
-    public List<HoaDonDTO> getAll() {
+    public HoaDonDTO updateHoaDon(Long id, HoaDonDTO dto) {
+        HoaDon existing = hoaDonRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy hóa đơn"));
+
+        // update field từ DTO
+        existing.setNgayTao(dto.getNgayTao());
+        existing.setTienPhong(dto.getTienPhong());
+        existing.setSoDien(dto.getSoDien());
+        existing.setDonGiaDien(dto.getDonGiaDien());
+        existing.setSoNuoc(dto.getSoNuoc());
+        existing.setDonGiaNuoc(dto.getDonGiaNuoc());
+        existing.setDichVuKhac(dto.getDichVuKhac());
+        existing.setTrangThai(dto.getTrangThai());
+        existing.setGhiChu(dto.getGhiChu());
+
+        // update quan hệ
+        if (dto.getKhachHangId() != null) {
+            KhachHang khachHang = khachHangRepository.findById(dto.getKhachHangId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy khách hàng"));
+            existing.setKhachHang(khachHang);
+        }
+
+        if (dto.getPhongId() != null) {
+            Phong phong = phongRepository.findById(dto.getPhongId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng"));
+            existing.setPhong(phong);
+        }
+
+        HoaDon updated = hoaDonRepository.save(existing);
+        return hoaDonMapper.toDTO(updated);
+    }
+
+    @Override
+    public void deleteHoaDon(Long id) {
+        HoaDon existing = hoaDonRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy hóa đơn"));
+        hoaDonRepository.delete(existing);
+    }
+
+    @Override
+    public List<HoaDonDTO> getAllHoaDon() {
         return hoaDonRepository.findAll()
                 .stream()
-                .map(HoaDonMapper::toDTO)
+                .map(hoaDonMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public HoaDonDTO getById(Long id) {
-        return hoaDonRepository.findById(id)
-                .map(HoaDonMapper::toDTO)
-                .orElse(null);
-    }
-
-    @Override
-    public HoaDonDTO create(HoaDonDTO dto) {
-        HoaDon hoaDon = new HoaDon();
-        hoaDon.setMaHoaDon(dto.getMaHoaDon());
-        hoaDon.setTongTien(dto.getTongTien());
-        hoaDon.setNgayTao(dto.getNgayTao());
-        hoaDon.setGhiChu(dto.getGhiChu());
-        hoaDon.setTrangThai(dto.getTrangThai());
-
-        if (dto.getKhachHangId() != null) {
-            KhachHang kh = khachHangRepository.findById(dto.getKhachHangId())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy khách hàng"));
-            hoaDon.setKhachHang(kh);
-        }
-
-        if (dto.getPhongId() != null) {
-            Phong phong = phongRepository.findById(dto.getPhongId())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng"));
-            hoaDon.setPhong(phong);
-        }
-
-        HoaDon saved = hoaDonRepository.save(hoaDon);
-        return HoaDonMapper.toDTO(saved);
-    }
-
-    @Override
-    public HoaDonDTO update(Long id, HoaDonDTO dto) {
+    public HoaDonDTO getHoaDonById(Long id) {
         HoaDon hoaDon = hoaDonRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy hóa đơn"));
-
-        hoaDon.setMaHoaDon(dto.getMaHoaDon());
-        hoaDon.setTongTien(dto.getTongTien());
-        hoaDon.setNgayTao(dto.getNgayTao());
-        hoaDon.setGhiChu(dto.getGhiChu());
-        hoaDon.setTrangThai(dto.getTrangThai());
-
-        if (dto.getKhachHangId() != null) {
-            KhachHang kh = khachHangRepository.findById(dto.getKhachHangId())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy khách hàng"));
-            hoaDon.setKhachHang(kh);
-        }
-
-        if (dto.getPhongId() != null) {
-            Phong phong = phongRepository.findById(dto.getPhongId())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng"));
-            hoaDon.setPhong(phong);
-        }
-
-        HoaDon saved = hoaDonRepository.save(hoaDon);
-        return HoaDonMapper.toDTO(saved);
-    }
-
-    @Override
-    public void delete(Long id) {
-        hoaDonRepository.deleteById(id);
+        return hoaDonMapper.toDTO(hoaDon);
     }
 }
