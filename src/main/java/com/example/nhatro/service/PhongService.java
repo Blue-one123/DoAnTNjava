@@ -9,4 +9,6 @@ public interface PhongService {
     PhongDTO createPhong(PhongDTO phongDTO);
     PhongDTO updatePhong(Long id, PhongDTO phongDTO);
     void deletePhong(Long id);
+    List<PhongDTO> getAvailablePhong();
+
 }

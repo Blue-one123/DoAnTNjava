@@ -1,20 +1,24 @@
 package com.example.nhatro.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class HopDongDTO {
     private Long id;
+    private String maHopDong;       // mã hợp đồng
     private Long khachHangId;
-    private String tenKhachHang; // hiển thị
+    private String tenKhachHang;    // hiển thị
     private Long phongId;
-    private String maPhong; // hiển thị
+    private String maPhong;         // hiển thị
     private LocalDate ngayBatDau;
     private LocalDate ngayKetThuc;
-    private Double tienDatCoc;
-    private Double giaThue;
-    private String trangThai;
-    private String phuongThucThanhToan;
+    private Double soTienCoc;
+    private Double soTienThue;      // giá phòng copy từ bảng phong
+    private String fileHopDong;     // đường dẫn file
+    private String trangThai;       // ChoDuyet / DangHieuLuc / HetHan / Huy
     private String ghiChu;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     // Getter & Setter
     public Long getId() {
@@ -22,6 +26,13 @@ public class HopDongDTO {
     }
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getMaHopDong() {
+        return maHopDong;
+    }
+    public void setMaHopDong(String maHopDong) {
+        this.maHopDong = maHopDong;
     }
 
     public Long getKhachHangId() {
@@ -48,8 +59,8 @@ public class HopDongDTO {
     public String getMaPhong() {
         return maPhong;
     }
-    public void setMaPhong(String tenPhong) {
-        this.maPhong = tenPhong;
+    public void setMaPhong(String maPhong) {
+        this.maPhong = maPhong;
     }
 
     public LocalDate getNgayBatDau() {
@@ -66,18 +77,25 @@ public class HopDongDTO {
         this.ngayKetThuc = ngayKetThuc;
     }
 
-    public Double getTienDatCoc() {
-        return tienDatCoc;
+    public Double getSoTienCoc() {
+        return soTienCoc;
     }
-    public void setTienDatCoc(Double tienDatCoc) {
-        this.tienDatCoc = tienDatCoc;
+    public void setSoTienCoc(Double soTienCoc) {
+        this.soTienCoc = soTienCoc;
     }
 
-    public Double getGiaThue() {
-        return giaThue;
+    public Double getSoTienThue() {
+        return soTienThue;
     }
-    public void setGiaThue(Double giaThue) {
-        this.giaThue = giaThue;
+    public void setSoTienThue(Double soTienThue) {
+        this.soTienThue = soTienThue;
+    }
+
+    public String getFileHopDong() {
+        return fileHopDong;
+    }
+    public void setFileHopDong(String fileHopDong) {
+        this.fileHopDong = fileHopDong;
     }
 
     public String getTrangThai() {
@@ -87,17 +105,24 @@ public class HopDongDTO {
         this.trangThai = trangThai;
     }
 
-    public String getPhuongThucThanhToan() {
-        return phuongThucThanhToan;
-    }
-    public void setPhuongThucThanhToan(String phuongThucThanhToan) {
-        this.phuongThucThanhToan = phuongThucThanhToan;
-    }
-
     public String getGhiChu() {
         return ghiChu;
     }
     public void setGhiChu(String ghiChu) {
         this.ghiChu = ghiChu;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

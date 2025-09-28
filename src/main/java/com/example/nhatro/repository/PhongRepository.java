@@ -14,4 +14,5 @@ public interface PhongRepository extends JpaRepository<Phong, Long> {
     Optional<Phong> findByMaPhong(String maPhong);
     List<Phong> findByTrangThai(String trangThai);
     Page<Phong> findByLoaiPhongContainingIgnoreCase(String loaiPhong, Pageable pageable);
+    
 }

@@ -5,6 +5,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+
 public interface HopDongRepository extends JpaRepository<HopDong, Long> {
-    Page<HopDong> findByKhachHang_TenKhachHangContainingIgnoreCase(String keyword, Pageable pageable);
+    Page<HopDong> findByTenKhachHangContainingIgnoreCase(String tenKhachHang, Pageable pageable);
+
+    // nếu cần thêm tìm theo mã phòng
+    Page<HopDong> findByMaPhongContainingIgnoreCase(String maPhong, Pageable pageable);
 }

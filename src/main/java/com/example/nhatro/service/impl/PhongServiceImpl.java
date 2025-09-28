@@ -16,6 +16,10 @@ public class PhongServiceImpl implements PhongService {
 
     @Autowired
     private PhongRepository phongRepository;
+    
+    //@Autowired
+    //private PhongMapper phongMapper;
+
 
     @Override
     public List<PhongDTO> getAllPhong() {
@@ -58,4 +62,13 @@ public class PhongServiceImpl implements PhongService {
     public void deletePhong(Long id) {
         phongRepository.deleteById(id);
     }
+    @Override
+    public List<PhongDTO> getAvailablePhong() {
+    return phongRepository.findByTrangThai("Trống")
+            .stream()
+            .map(PhongMapper::toDTO)
+            .collect(Collectors.toList());
+}
+
+
 }

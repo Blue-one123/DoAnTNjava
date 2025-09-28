@@ -1,17 +1,17 @@
 package com.example.nhatro.service;
 
 import com.example.nhatro.dto.HopDongDTO;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import java.util.List;
 
 public interface HopDongService {
-    Page<HopDongDTO> getAll(String keyword, Pageable pageable);
+    HopDongDTO createHopDong(HopDongDTO dto);
+    HopDongDTO updateHopDong(Long id, HopDongDTO dto);
+    void deleteHopDong(Long id);
+    HopDongDTO getHopDongById(Long id);
+    List<HopDongDTO> getAllHopDong();
 
-    HopDongDTO getById(Long id);
-
-    HopDongDTO create(HopDongDTO dto);
-
-    HopDongDTO update(Long id, HopDongDTO dto);
-
-    void delete(Long id);
+    // Nghiệp vụ
+    HopDongDTO duyetHopDong(Long id);       // admin duyệt
+    HopDongDTO ketThucHopDong(Long id);     // kết thúc
+    HopDongDTO huyHopDong(Long id);         // hủy
 }

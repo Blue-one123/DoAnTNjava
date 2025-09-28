@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 public interface KhachHangService {
     Page<KhachHangDTO> getAllKhachHang(int page, int size);
     List<KhachHangDTO> getAllKhachHangNoPaging();
-
+    List<KhachHangDTO> getAvailableKhachHang();
     KhachHangDTO getKhachHangById(Long id);
     KhachHangDTO createKhachHang(KhachHangDTO dto);
     KhachHangDTO updateKhachHang(Long id, KhachHangDTO dto);

@@ -1,50 +1,62 @@
 package com.example.nhatro.controller;
 
 import com.example.nhatro.dto.HopDongDTO;
+import com.example.nhatro.entity.KhachHang;
+import com.example.nhatro.repository.KhachHangRepository;
 import com.example.nhatro.service.HopDongService;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/hopdong")
 public class HopDongcontroller {
 
-    @Autowired
-    private HopDongService service;
+    private final HopDongService hopDongService;
 
-    // Lấy danh sách hợp đồng (có phân trang + tìm kiếm theo keyword)
-    @GetMapping
-    public Page<HopDongDTO> getAll(
-            @RequestParam(required = false) String keyword,
-            Pageable pageable
-    ) {
-        return service.getAll(keyword, pageable);
+    public HopDongcontroller(HopDongService hopDongService) {
+        this.hopDongService = hopDongService;
     }
 
-    // Lấy chi tiết 1 hợp đồng
-    @GetMapping("/{id}")
-    public HopDongDTO getById(@PathVariable Long id) {
-        return service.getById(id);
-    }
-
-    // Tạo hợp đồng mới
     @PostMapping
-    public HopDongDTO create(@Valid @RequestBody HopDongDTO dto) {
-        return service.create(dto);
+    public HopDongDTO create(@RequestBody HopDongDTO dto) {
+        return hopDongService.createHopDong(dto);
     }
+   
 
-    // Cập nhật hợp đồng
     @PutMapping("/{id}")
-    public HopDongDTO update(@PathVariable Long id, @Valid @RequestBody HopDongDTO dto) {
-        return service.update(id, dto);
+    public HopDongDTO update(@PathVariable Long id, @RequestBody HopDongDTO dto) {
+        return hopDongService.updateHopDong(id, dto);
     }
 
-    // Xóa hợp đồng
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
-        service.delete(id);
+        hopDongService.deleteHopDong(id);
+    }
+
+    @GetMapping("/{id}")
+    public HopDongDTO getById(@PathVariable Long id) {
+        return hopDongService.getHopDongById(id);
+    }
+
+    @GetMapping
+    public List<HopDongDTO> getAll() {
+        return hopDongService.getAllHopDong();
+    }
+
+    // Các API nghiệp vụ
+    @PostMapping("/{id}/duyet")
+    public HopDongDTO duyet(@PathVariable Long id) {
+        return hopDongService.duyetHopDong(id);
+    }
+
+    @PostMapping("/{id}/ketthuc")
+    public HopDongDTO ketThuc(@PathVariable Long id) {
+        return hopDongService.ketThucHopDong(id);
+    }
+
+    @PostMapping("/{id}/huy")
+    public HopDongDTO huy(@PathVariable Long id) {
+        return hopDongService.huyHopDong(id);
     }
 }

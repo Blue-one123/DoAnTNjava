@@ -27,11 +27,14 @@ public class KhachHang {
 
     @Column(name = "cccd")
     private String cccd;
-
-    // 🔑 Quan hệ với Phong
+    
     @ManyToOne
     @JoinColumn(name = "phong_id") // Khóa ngoại trong bảng khach_hang
     private Phong phong;
+    
+    @OneToOne
+    @JoinColumn(name = "hop_dong_id" ) // Khóa ngoại trong bảng khach_hang
+    private HopDong hopDong;
 
     // Getter & Setter
     public Long getId() { return id; }
@@ -54,7 +57,12 @@ public class KhachHang {
 
     public String getCccd() { return cccd; }
     public void setCccd(String cccd) { this.cccd = cccd; }
-
+    
     public Phong getPhong() { return phong; }
     public void setPhong(Phong phong) { this.phong = phong; }
+
+    public HopDong getHopDong() { return hopDong; }
+    public void setHopDong(HopDong hopDong) { this.hopDong = hopDong; }   
+    
+
 }

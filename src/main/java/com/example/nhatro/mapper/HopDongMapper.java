@@ -2,50 +2,72 @@ package com.example.nhatro.mapper;
 
 import com.example.nhatro.dto.HopDongDTO;
 import com.example.nhatro.entity.HopDong;
+import com.example.nhatro.entity.KhachHang;
+import com.example.nhatro.entity.Phong;
 
 public class HopDongMapper {
 
+    // Entity -> DTO
     public static HopDongDTO toDTO(HopDong hopDong) {
         if (hopDong == null) return null;
 
         HopDongDTO dto = new HopDongDTO();
         dto.setId(hopDong.getId());
+        dto.setMaHopDong(hopDong.getMaHopDong());
 
+        // Lấy tên khách hàng từ entity KhachHang hoặc cột tenKhachHang
         if (hopDong.getKhachHang() != null) {
-            dto.setKhachHangId(hopDong.getKhachHang().getId());
             dto.setTenKhachHang(hopDong.getKhachHang().getTenKhachHang());
+        } else {
+            dto.setTenKhachHang(hopDong.getTenKhachHang());
         }
 
+        // Lấy mã phòng từ entity Phong hoặc cột maPhong
         if (hopDong.getPhong() != null) {
-            dto.setPhongId(hopDong.getPhong().getId());
             dto.setMaPhong(hopDong.getPhong().getMaPhong());
+        } else {
+            dto.setMaPhong(hopDong.getMaPhong());
         }
 
         dto.setNgayBatDau(hopDong.getNgayBatDau());
         dto.setNgayKetThuc(hopDong.getNgayKetThuc());
-        dto.setTienDatCoc(hopDong.getTienDatCoc());
-        dto.setGiaThue(hopDong.getGiaThue());
-        dto.setTrangThai(hopDong.getTrangThai());
-        dto.setPhuongThucThanhToan(hopDong.getPhuongThucThanhToan());
+        dto.setSoTienCoc(hopDong.getSoTienCoc());
+        dto.setSoTienThue(hopDong.getSoTienThue());
+        dto.setFileHopDong(hopDong.getFileHopDong());
+        dto.setTrangThai(hopDong.getTrangThai() != null ? hopDong.getTrangThai().name() : null);
         dto.setGhiChu(hopDong.getGhiChu());
+        dto.setCreatedAt(hopDong.getCreatedAt());
+        dto.setUpdatedAt(hopDong.getUpdatedAt());
 
         return dto;
     }
 
-    public static HopDong toEntity(HopDongDTO dto) {
+    // DTO -> Entity
+    public static HopDong toEntity(HopDongDTO dto, KhachHang khachHang, Phong phong) {
         if (dto == null) return null;
 
         HopDong hopDong = new HopDong();
         hopDong.setId(dto.getId());
+        hopDong.setMaHopDong(dto.getMaHopDong());
+
+        // set cả string và entity để tránh null
+        hopDong.setTenKhachHang(dto.getTenKhachHang());
+        hopDong.setKhachHang(khachHang);
+
+        hopDong.setMaPhong(dto.getMaPhong());
+        hopDong.setPhong(phong);
+
         hopDong.setNgayBatDau(dto.getNgayBatDau());
         hopDong.setNgayKetThuc(dto.getNgayKetThuc());
-        hopDong.setTienDatCoc(dto.getTienDatCoc());
-        hopDong.setGiaThue(dto.getGiaThue());
-        hopDong.setTrangThai(dto.getTrangThai());
-        hopDong.setPhuongThucThanhToan(dto.getPhuongThucThanhToan());
-        hopDong.setGhiChu(dto.getGhiChu());
+        hopDong.setSoTienCoc(dto.getSoTienCoc());
+        hopDong.setSoTienThue(dto.getSoTienThue());
+        hopDong.setFileHopDong(dto.getFileHopDong());
 
-        // ⚠️ KhachHang và Phong sẽ được set trong Service khi lấy từ repository
+        if (dto.getTrangThai() != null) {
+            hopDong.setTrangThai(HopDong.TrangThaiHopDong.valueOf(dto.getTrangThai()));
+        }
+
+        hopDong.setGhiChu(dto.getGhiChu());
         return hopDong;
     }
 }

@@ -9,97 +9,119 @@ import com.example.nhatro.repository.HopDongRepository;
 import com.example.nhatro.repository.KhachHangRepository;
 import com.example.nhatro.repository.PhongRepository;
 import com.example.nhatro.service.HopDongService;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class HopDongServiceImpl implements HopDongService {
 
-    @Autowired
-    private HopDongRepository hopDongRepository;
+    private final HopDongRepository hopDongRepo;
+    private final KhachHangRepository khachHangRepo;
+    private final PhongRepository phongRepo;
 
-    @Autowired
-    private KhachHangRepository khachHangRepository;
-
-    @Autowired
-    private PhongRepository phongRepository;
-
-    @Override
-    public Page<HopDongDTO> getAll(String keyword, Pageable pageable) {
-        Page<HopDong> page;
-        if (keyword != null && !keyword.isEmpty()) {
-            // Ví dụ: tìm theo tên khách hàng
-            page = hopDongRepository.findByKhachHang_TenKhachHangContainingIgnoreCase(keyword, pageable);
-        } else {
-            page = hopDongRepository.findAll(pageable);
-        }
-        return page.map(HopDongMapper::toDTO);
+    public HopDongServiceImpl(
+            HopDongRepository hopDongRepo,
+            KhachHangRepository khachHangRepo,
+            PhongRepository phongRepo
+    ) {
+        this.hopDongRepo = hopDongRepo;
+        this.khachHangRepo = khachHangRepo;
+        this.phongRepo = phongRepo;
     }
 
     @Override
-    public HopDongDTO getById(Long id) {
-        HopDong hopDong = hopDongRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy hợp đồng"));
-        return HopDongMapper.toDTO(hopDong);
+    public HopDongDTO createHopDong(HopDongDTO dto) {
+        // set trạng thái mặc định
+        dto.setTrangThai(HopDong.TrangThaiHopDong.ChoDuyet.name());
+
+        // tìm khách hàng từ tên
+        KhachHang khachHang = khachHangRepo.findByTenKhachHang(dto.getTenKhachHang())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy khách hàng: " + dto.getTenKhachHang()));
+
+        // tìm phòng từ mã phòng
+        Phong phong = phongRepo.findByMaPhong(dto.getMaPhong())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng: " + dto.getMaPhong()));
+
+        HopDong entity = HopDongMapper.toEntity(dto, khachHang, phong);
+        return HopDongMapper.toDTO(hopDongRepo.save(entity));
     }
 
     @Override
-    public HopDongDTO create(HopDongDTO dto) {
-        HopDong hopDong = HopDongMapper.toEntity(dto);
-
-        // Gắn khách hàng
-        KhachHang kh = khachHangRepository.findById(dto.getKhachHangId())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy khách hàng"));
-        hopDong.setKhachHang(kh);
-
-        // Gắn phòng
-        Phong p = phongRepository.findById(dto.getPhongId())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng"));
-        hopDong.setPhong(p);
-
-        HopDong saved = hopDongRepository.save(hopDong);
-        return HopDongMapper.toDTO(saved);
-    }
-
-    @Override
-    public HopDongDTO update(Long id, HopDongDTO dto) {
-        HopDong hopDong = hopDongRepository.findById(id)
+    public HopDongDTO updateHopDong(Long id, HopDongDTO dto) {
+        HopDong hd = hopDongRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy hợp đồng"));
 
-        hopDong.setNgayBatDau(dto.getNgayBatDau());
-        hopDong.setNgayKetThuc(dto.getNgayKetThuc());
-        hopDong.setTienDatCoc(dto.getTienDatCoc());
-        hopDong.setGiaThue(dto.getGiaThue());
-        hopDong.setTrangThai(dto.getTrangThai());
-        hopDong.setPhuongThucThanhToan(dto.getPhuongThucThanhToan());
-        hopDong.setGhiChu(dto.getGhiChu());
+        // load lại khách hàng + phòng
+        KhachHang khachHang = khachHangRepo.findByTenKhachHang(dto.getTenKhachHang())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy khách hàng: " + dto.getTenKhachHang()));
+        Phong phong = phongRepo.findByMaPhong(dto.getMaPhong())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng: " + dto.getMaPhong()));
 
-        // Nếu có thay đổi khách hàng
-        if (dto.getKhachHangId() != null) {
-            KhachHang kh = khachHangRepository.findById(dto.getKhachHangId())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy khách hàng"));
-            hopDong.setKhachHang(kh);
+        // cập nhật dữ liệu
+        hd.setKhachHang(khachHang);
+        hd.setPhong(phong);
+        hd.setNgayBatDau(dto.getNgayBatDau());
+        hd.setNgayKetThuc(dto.getNgayKetThuc());
+        hd.setSoTienCoc(dto.getSoTienCoc());
+        hd.setSoTienThue(dto.getSoTienThue());
+        hd.setFileHopDong(dto.getFileHopDong());
+        hd.setGhiChu(dto.getGhiChu());
+
+        if (dto.getTrangThai() != null) {
+            hd.setTrangThai(HopDong.TrangThaiHopDong.valueOf(dto.getTrangThai()));
         }
 
-        // Nếu có thay đổi phòng
-        if (dto.getPhongId() != null) {
-            Phong p = phongRepository.findById(dto.getPhongId())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng"));
-            hopDong.setPhong(p);
-        }
-
-        HopDong updated = hopDongRepository.save(hopDong);
-        return HopDongMapper.toDTO(updated);
+        return HopDongMapper.toDTO(hopDongRepo.save(hd));
     }
 
     @Override
-    public void delete(Long id) {
-        if (!hopDongRepository.existsById(id)) {
-            throw new RuntimeException("Không tìm thấy hợp đồng để xóa");
-        }
-        hopDongRepository.deleteById(id);
+    public void deleteHopDong(Long id) {
+        hopDongRepo.deleteById(id);
+    }
+
+    @Override
+    public HopDongDTO getHopDongById(Long id) {
+        return hopDongRepo.findById(id)
+                .map(HopDongMapper::toDTO)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy hợp đồng"));
+    }
+
+    @Override
+    public List<HopDongDTO> getAllHopDong() {
+        return hopDongRepo.findAll()
+                .stream()
+                .map(HopDongMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public HopDongDTO duyetHopDong(Long id) {
+        HopDong hd = hopDongRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy hợp đồng"));
+        hd.setTrangThai(HopDong.TrangThaiHopDong.DangHieuLuc);
+
+        return HopDongMapper.toDTO(hopDongRepo.save(hd));
+    }
+
+    @Override
+    public HopDongDTO ketThucHopDong(Long id) {
+        HopDong hd = hopDongRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy hợp đồng"));
+        hd.setTrangThai(HopDong.TrangThaiHopDong.HetHan);
+
+        return HopDongMapper.toDTO(hopDongRepo.save(hd));
+    }
+
+    @Override
+    public HopDongDTO huyHopDong(Long id) {
+        HopDong hd = hopDongRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy hợp đồng"));
+        hd.setTrangThai(HopDong.TrangThaiHopDong.Huy);
+
+        return HopDongMapper.toDTO(hopDongRepo.save(hd));
     }
 }
