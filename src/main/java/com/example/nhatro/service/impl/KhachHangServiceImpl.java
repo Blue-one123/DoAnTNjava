@@ -1,10 +1,14 @@
 package com.example.nhatro.service.impl;
 
 import com.example.nhatro.dto.KhachHangDTO;
+import com.example.nhatro.dto.KhachHangPhongDTO;
 import com.example.nhatro.entity.KhachHang;
 import com.example.nhatro.mapper.KhachHangMapper;
 import com.example.nhatro.repository.KhachHangRepository;
 import com.example.nhatro.service.KhachHangService;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -36,7 +40,7 @@ public class KhachHangServiceImpl implements KhachHangService {
 
     @Override
     public KhachHangDTO createKhachHang(KhachHangDTO dto) {
-        KhachHang entity = mapper.toEntity(dto);
+        KhachHang entity = mapper.toEntity(dto);  // Mapper sẽ parse String -> LocalDate
         return mapper.toDTO(repository.save(entity));
     }
 
@@ -55,10 +59,12 @@ public class KhachHangServiceImpl implements KhachHangService {
 
         entity.setTenKhachHang(dto.getTenKhachHang());
         entity.setSoDienThoai(dto.getSoDienThoai());
-        entity.setNgaySinh(dto.getNgaySinh());
         entity.setDiaChi(dto.getDiaChi());
         entity.setEmail(dto.getEmail());
         entity.setCccd(dto.getCccd());
+        if (dto.getNgaySinh() != null && !dto.getNgaySinh().isEmpty()) {
+            entity.setNgaySinh(LocalDate.parse(dto.getNgaySinh(), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        } 
         return mapper.toDTO(repository.save(entity));
     }
 
@@ -74,5 +80,23 @@ public class KhachHangServiceImpl implements KhachHangService {
                 .filter(kh -> kh.getHopDong() == null) // khách chưa có phing
                 .map(mapper::toDTO) // sửa đúng tên method
                 .collect(Collectors.toList());
+    }
+    @Override
+    public List<KhachHangPhongDTO> getAllKhachHangDangThue() {
+        List<KhachHang> khachHangs = repository.findByPhongIsNotNull();
+        List<KhachHangPhongDTO> result = new ArrayList<>();
+
+        for (KhachHang kh : khachHangs) {
+            if (kh.getPhong() != null) {
+                result.add(new KhachHangPhongDTO(
+                        kh.getId(),
+                        kh.getTenKhachHang(),
+                        kh.getPhong().getId(),
+                        kh.getPhong().getMaPhong(),
+                        kh.getPhong().getGiaPhong()
+                ));
+            }
+        }
+        return result;
     }
 }

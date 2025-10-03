@@ -52,6 +52,7 @@ com\example\nhatro\repository\HopDongRepository.class
 com\example\nhatro\mapper\KhachHangMapper.class
 com\example\nhatro\repository\RoleRepository.class
 com\example\nhatro\controller\HopDongcontroller.class
+com\example\nhatro\dto\KhachHangPhongDTO.class
 com\example\nhatro\mapper\HoaDonMapper.class
 com\example\nhatro\dto\KhachHangDTO.class
 com\example\nhatro\exception\GlobalExceptionHandler.class

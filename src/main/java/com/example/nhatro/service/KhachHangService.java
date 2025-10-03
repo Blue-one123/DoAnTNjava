@@ -1,6 +1,7 @@
 package com.example.nhatro.service;
 
 import com.example.nhatro.dto.KhachHangDTO;
+import com.example.nhatro.dto.KhachHangPhongDTO;
 import java.util.List;
 import org.springframework.data.domain.Page;
 
@@ -12,4 +13,5 @@ public interface KhachHangService {
     KhachHangDTO createKhachHang(KhachHangDTO dto);
     KhachHangDTO updateKhachHang(Long id, KhachHangDTO dto);
     void deleteKhachHang(Long id);
+    public List<KhachHangPhongDTO> getAllKhachHangDangThue();
 }

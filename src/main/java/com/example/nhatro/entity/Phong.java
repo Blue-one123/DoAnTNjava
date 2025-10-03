@@ -22,7 +22,25 @@ public class Phong {
 
     @Column(length = 500)
     private String moTa;
+
     
+    
+    @Column(name = "anh_phong")
+    private String anhPhong;
+    /*
+    @OneToOne(mappedBy = "phong")
+    private KhachHang khachHang;
+    */
+    @OneToOne(mappedBy = "phong")
+    private HopDong hopDong;
+   
+    @OneToOne
+    @JoinColumn(name = "khach_hang_id")
+    private KhachHang khachHang;
+
+    //@OneToOne
+    //@JoinColumn(name = "hop_dong_id")
+    //private HopDong hopDong;
     // getter & setter
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -42,4 +60,25 @@ public class Phong {
     public String getMoTa() { return moTa; }
     public void setMoTa(String moTa) { this.moTa = moTa; }
     
+    public HopDong getHopDong() {
+        return hopDong;
+    }
+
+    public void setHopDong(HopDong hopDong) {
+        this.hopDong = hopDong;
+    }
+    public KhachHang getKhachHang() {
+    return khachHang;
+    }
+
+    public void setKhachHang(KhachHang khachHang) {
+    this.khachHang = khachHang;
+    }
+    public String getAnhPhong() {
+        return anhPhong;
+    }
+
+    public void setAnhPhong(String anhPhong) {
+        this.anhPhong = anhPhong;
+    }
 }

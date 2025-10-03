@@ -1,5 +1,6 @@
 package com.example.nhatro.service.impl;
 
+
 import com.example.nhatro.dto.PhongDTO;
 import com.example.nhatro.entity.Phong;
 import com.example.nhatro.mapper.PhongMapper;
@@ -17,8 +18,8 @@ public class PhongServiceImpl implements PhongService {
     @Autowired
     private PhongRepository phongRepository;
     
-    //@Autowired
-    //private PhongMapper phongMapper;
+
+    private PhongMapper phongMapper;
 
 
     @Override
@@ -68,7 +69,16 @@ public class PhongServiceImpl implements PhongService {
             .stream()
             .map(PhongMapper::toDTO)
             .collect(Collectors.toList());
+        }
+    @Override
+    public PhongDTO updateAnhPhong(Long id, String anhPhong) {
+    Phong phong = phongRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng"));
+    phong.setAnhPhong(anhPhong); // cập nhật đường dẫn ảnh
+    phongRepository.save(phong);
+    return phongMapper.toDTO(phong);
 }
 
+    
 
 }

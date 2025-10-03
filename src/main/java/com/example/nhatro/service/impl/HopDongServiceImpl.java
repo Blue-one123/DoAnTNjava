@@ -35,21 +35,34 @@ public class HopDongServiceImpl implements HopDongService {
 
     @Override
     public HopDongDTO createHopDong(HopDongDTO dto) {
-        // set trạng thái mặc định
-        dto.setTrangThai(HopDong.TrangThaiHopDong.ChoDuyet.name());
+    // set trạng thái mặc định
+    dto.setTrangThai(HopDong.TrangThaiHopDong.ChoDuyet.name());
 
-        // tìm khách hàng từ tên
-        KhachHang khachHang = khachHangRepo.findByTenKhachHang(dto.getTenKhachHang())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy khách hàng: " + dto.getTenKhachHang()));
+    // tìm khách hàng từ tên
+    KhachHang khachHang = khachHangRepo.findByTenKhachHang(dto.getTenKhachHang())
+            .orElseThrow(() -> new RuntimeException("Không tìm thấy khách hàng: " + dto.getTenKhachHang()));
 
-        // tìm phòng từ mã phòng
-        Phong phong = phongRepo.findByMaPhong(dto.getMaPhong())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng: " + dto.getMaPhong()));
+    // tìm phòng từ mã phòng
+    Phong phong = phongRepo.findByMaPhong(dto.getMaPhong())
+            .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng: " + dto.getMaPhong()));
 
-        HopDong entity = HopDongMapper.toEntity(dto, khachHang, phong);
-        return HopDongMapper.toDTO(hopDongRepo.save(entity));
+    // tạo hợp đồng
+    HopDong entity = HopDongMapper.toEntity(dto, khachHang, phong);
+
+    // gắn ngược lại quan hệ
+    khachHang.setPhong(phong);
+    khachHang.setHopDong(entity);
+
+    phong.setKhachHang(khachHang);
+    phong.setHopDong(entity);
+
+    // lưu
+    hopDongRepo.save(entity);
+    khachHangRepo.save(khachHang);
+    phongRepo.save(phong);
+
+    return HopDongMapper.toDTO(entity);
     }
-
     @Override
     public HopDongDTO updateHopDong(Long id, HopDongDTO dto) {
         HopDong hd = hopDongRepo.findById(id)

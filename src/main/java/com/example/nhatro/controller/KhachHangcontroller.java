@@ -1,12 +1,14 @@
 package com.example.nhatro.controller;
 
 import com.example.nhatro.dto.KhachHangDTO;
-import com.example.nhatro.repository.KhachHangRepository;
+import com.example.nhatro.dto.KhachHangPhongDTO;
+
 import com.example.nhatro.service.KhachHangService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -93,12 +95,18 @@ public class KhachHangcontroller {
             .map(kh -> {
                 Map<String, Object> map = new HashMap<>();
                 map.put("id", kh.getId());
-                map.put("ten", kh.getTenKhachHang());
+                map.put("tenKhachHang", kh.getTenKhachHang());
                 return map;
             })
             .collect(Collectors.toList());
 
     return ResponseEntity.ok(result);
-}
+    }
+    // lay khach hang dang thue phong
+    @GetMapping("/dang-thue")
+    public List<KhachHangPhongDTO> getKhachHangDangThue() {
+        return khachHangService.getAllKhachHangDangThue();
+    }
+    
 }
 

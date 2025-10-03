@@ -16,12 +16,13 @@ public class HopDong {
     private String maHopDong;
 
     //Quan hệ với khách hàng
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "khach_hang_id", nullable = false)
     private KhachHang khachHang;
 
+
     // Quan hệ với phòng
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "phong_id", nullable = false)
     private Phong phong;
     

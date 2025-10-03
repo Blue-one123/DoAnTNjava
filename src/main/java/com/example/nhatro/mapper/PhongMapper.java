@@ -16,6 +16,7 @@ public class PhongMapper {
         dto.setGiaPhong(phong.getGiaPhong());
         dto.setTrangThai(phong.getTrangThai());
         dto.setMoTa(phong.getMoTa());
+        dto.setAnhPhong(phong.getAnhPhong());
         return dto;
     }
 
@@ -30,6 +31,7 @@ public class PhongMapper {
         phong.setGiaPhong(dto.getGiaPhong());
         phong.setTrangThai(dto.getTrangThai());
         phong.setMoTa(dto.getMoTa());
+        phong.setAnhPhong(dto.getAnhPhong());
         return phong;
     }
 }

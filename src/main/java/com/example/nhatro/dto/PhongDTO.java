@@ -21,4 +21,5 @@ public class PhongDTO {
 
     @Size(max = 500)
     private String moTa;
+    private String anhPhong;
 }
