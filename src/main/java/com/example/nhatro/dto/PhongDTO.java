@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class PhongDTO {
     private Long id;
-    
+    private Long khachHangId;
     private String maPhong;
 
     @NotBlank

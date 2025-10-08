@@ -39,7 +39,7 @@ public class PhongServiceImpl implements PhongService {
 
     @Override
     public PhongDTO createPhong(PhongDTO phongDTO) {
-        Phong phong = PhongMapper.toEntity(phongDTO);
+        Phong phong = PhongMapper.toEntityNew(phongDTO);
         Phong saved = phongRepository.save(phong);
         return PhongMapper.toDTO(saved);
     }
@@ -48,14 +48,9 @@ public class PhongServiceImpl implements PhongService {
     public PhongDTO updatePhong(Long id, PhongDTO phongDTO) {
         Phong existing = phongRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng có id = " + id));
-
-        existing.setMaPhong(phongDTO.getMaPhong());
-        existing.setLoaiPhong(phongDTO.getLoaiPhong());
-        existing.setGiaPhong(phongDTO.getGiaPhong());
-        existing.setTrangThai(phongDTO.getTrangThai());
-        existing.setMoTa(phongDTO.getMoTa());
-
-        Phong updated = phongRepository.save(existing);
+        Phong updatedEntity = PhongMapper.toEntity(phongDTO, existing);
+        // ⚡ Lưu lại
+        Phong updated = phongRepository.save(updatedEntity);
         return PhongMapper.toDTO(updated);
     }
 
